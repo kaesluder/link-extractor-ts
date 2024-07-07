@@ -41,7 +41,6 @@ export const convertMarkdownToDom = async (
  * @returns {Effect.Effect<DocumentFragment, UnknownException>} - An Effect that resolves to a DocumentFragment 
  * representing the parsed HTML or an UnknownException if an error occurs.
  * 
- * @throws {UnknownException} - Throws an UnknownException if the file cannot be read or the markdown cannot be converted.
  */
 export const convertMarkdownToDomEffect = (
     filePath: string,
