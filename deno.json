@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts --allow-read --allow-env"
+  },
+  "imports": {
+    "marked": "npm:marked@^13.0.2"
+  }
+}
