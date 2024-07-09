@@ -1,7 +1,8 @@
 import * as npmMarked from "npm:marked";
-import { DocumentFragment, JSDOM } from "npm:jsdom";
+// import { DocumentFragment, JSDOM } from "npm:jsdom";
 import { Effect } from "npm:effect";
 import { UnknownException } from "npm:effect/Cause";
+import { DOMParser, Element, HTMLDocument } from "jsr:@b-fuze/deno-dom";
 
 /**
  * Converts a markdown file to a DOM DocumentFragment.
@@ -16,7 +17,7 @@ import { UnknownException } from "npm:effect/Cause";
  */
 export const convertMarkdownToDom = async (
     filePath: string,
-): Promise<DocumentFragment> => {
+): Promise<HTMLDocument> => {
     // Read the markdown file
     const markdownContent = await Deno.readTextFile(filePath);
 
@@ -24,11 +25,20 @@ export const convertMarkdownToDom = async (
     const htmlContent = await npmMarked.marked(markdownContent);
 
     // Create a new JSDOM instance from the HTML string
-    const dom = JSDOM.fragment(htmlContent);
+    const dom = new DOMParser().parseFromString(htmlContent, "text/html");
+
+    // Create a meta element to store the file path
+    const meta = dom.createElement('meta');
+    meta.setAttribute('name', 'filePath');
+    meta.setAttribute('content', filePath);
+
+    // Append the meta element to the DOM
+    dom.appendChild(meta);
 
     // Return the DOM document
     return dom;
 };
+
 
 /**
  * Converts a markdown file to a DOM DocumentFragment using Effect.
@@ -44,7 +54,7 @@ export const convertMarkdownToDom = async (
  */
 export const convertMarkdownToDomEffect = (
     filePath: string,
-): Effect.Effect<DocumentFragment, UnknownException> => {
+): Effect.Effect<HTMLDocument, UnknownException> => {
     return Effect.tryPromise(async () => {
         return await convertMarkdownToDom(filePath);
     });
